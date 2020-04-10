@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+        <!-- Inherit Customer for Add Customer Status Field -->
+        <record id="view_customer_status_form" model="ir.ui.view">
+            <field name="name">view.customer.status.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet" position="before">
+                    <header>
+                        <button name="set_to_approved" string="Approved" class="oe_highlight" type="object" groups="customer_approval_master.customer_approval_rights" attrs="{'invisible': [('customer_status', '=', 'approved')]}"/>
+
+                        <button name="rest_to_draft" string="Rest to Draft" class="oe_highlight" type="object" groups="customer_approval_master.customer_approval_rights" attrs="{'invisible': [('customer_status', '=', 'draft')]}"/>
+                        
+                        <field name="customer_status" widget="statusbar" />
+                    </header>
+                </xpath>
+                <xpath expr="//form/sheet/notebook" position="inside">
+                    <page name="approval_history" string="Approval History">
+                        <group>
+                            <field name="approval_user_id" readonly="1"/>
+                            <field name="approval_date" readonly="1"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Add new Action for Draft Customer Menu -->
+        <record id="res_partner_action_draft_customer" model="ir.actions.act_window">
+            <field name="name">Draft Customers</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('customer_status', '=', 'draft')]</field>
+            <field name="context">{'search_default_customer': 1,'res_partner_search_mode': 'customer', 'default_is_company': True, 'default_customer_rank': 1}</field>
+        </record>
+
+        <!-- Add New Menu of Draft Customer -->
+        <menuitem 
+            id="draft_res_partner_menu"
+            parent="sale.sale_order_menu"
+            action="customer_approval_master.res_partner_action_draft_customer"
+            sequence="3" groups="sales_team.group_sale_salesman"/>
+
+        <!-- Replace Existing Action with Updated Domain -->
+        <record id="account.res_partner_action_customer" model="ir.actions.act_window">
+            <field name="name">Customers</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('customer_status', '=', 'approved')]</field>
+            <field name="context">{'search_default_customer': 1,'res_partner_search_mode': 'customer', 'default_is_company': True, 'default_customer_rank': 1}</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a new customer in your address book
+              </p><p>
+                Odoo helps you easily track all activities related to a customer.
+              </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

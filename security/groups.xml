@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+		<!-- Group for Customer Approval -->
+        <record id="customer_approval_rights" model="res.groups">
+            <field name="name">Can Approve Customer</field>
+            <field name="category_id" ref="base.module_category_hidden"/>
+        </record>
+        
+</odoo>
